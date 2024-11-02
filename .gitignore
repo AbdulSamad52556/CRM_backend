@@ -1,0 +1,72 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+*.log
+db.sqlite3
+/media
+/staticfiles
+
+# Environment variables
+.env
+
+# Virtual Environments
+venv/
+env/
+.venv/
+.venv/bin/
+.venv/lib/
+.venv/include/
+
+# Django settings local overrides
+settings_local.py
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor-specific
+.idea/
+.vscode/
+*.swp
+*~
+
+# Docker-related files
+*.dockerfile
+docker-compose.yaml
+
+# Node Modules (if using frontend dependencies with Django)
+node_modules/
+
+# Ignore Word documents
+*.docx
+
+# Ignore the media directory (uploads)
+media/
+
+# Compiled files and caches
+*.mo
+*.pot
+
+# Migrations
+**/migrations/
+
+# Ignore test output
+.tox/
+coverage/
+htmlcov/
+*.cover
+*.coverage
+*.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.coveragerc
+*.hypothesis/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
