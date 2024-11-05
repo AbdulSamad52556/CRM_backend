@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, Unit
 
 class PropertyImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,9 +13,9 @@ class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = [
-            'property_name', 'property_type', 'mode', 'area_name', 'google_maps_link', 
+            'id','property_name', 'property_type', 'mode', 'area_name', 'google_maps_link', 
             'zone_number', 'street_number', 'building_number', 'available_units', 
-            'contract_type', 'payment_file', 'property_images'
+            'contract_type', 'payment_file', 'property_images', 'owner_id'
         ]
 
     def create(self, validated_data):
@@ -30,3 +30,12 @@ class PropertySerializer(serializers.ModelSerializer):
         except Exception as e:
             print(e, 'serializer error')
             raise serializers.ValidationError("Error creating property with images.")
+
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = [
+            'id','property', 'unit_no', 'unit_type', 'size_sqm', 'furnished', 'floor_no', 'bedrooms',
+            'parking_spaces', 'water_connection_no', 'electricity_connection_no', 'cooling_number',
+            'rental_price', 'sales_price', 'status', 'layout_type'
+        ]

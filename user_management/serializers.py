@@ -4,21 +4,23 @@ from django.contrib.auth.hashers import make_password
 from .models import CustomUser, Role
 from django.core.exceptions import ObjectDoesNotExist
 
-
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(write_only=True) 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'phone_number', 'role', 'password')
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'phone_number', 'role', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
-        user = User.objects.create(**validated_data)
+        role_name = validated_data.pop('role')
+        role = Role.objects.get(name=role_name) 
+        validated_data['role'] = role
+        user = CustomUser.objects.create(**validated_data)
         return user
-
-
+    
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)

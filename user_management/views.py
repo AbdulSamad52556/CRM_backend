@@ -51,7 +51,8 @@ class RegisterAdminView(View):
         if User.objects.filter(role__name='Admin').exists():
             return JsonResponse({'message': 'Admin user already exists.'}, status=400)
         
-        legal_role, created = Role.objects.get_or_create(name='Legal Team')
+        legal_role, created = Role.objects.get_or_create(name='LegalTeam')
+        lead_role, created = Role.objects.get_or_create(name='Lead')
         owner_role, created = Role.objects.get_or_create(name='Owner')
         manager_role, created = Role.objects.get_or_create(name='Manager')
         agent_role, created = Role.objects.get_or_create(name='Agent')

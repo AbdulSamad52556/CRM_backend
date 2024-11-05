@@ -38,7 +38,7 @@ class Property(models.Model):
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='property_images/')
+    image = models.ImageField(upload_to='property_images/',null=True)
 
 class Unit(models.Model):
     UNIT_STATUS_CHOICES = [
@@ -62,8 +62,8 @@ class Unit(models.Model):
     rental_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     sales_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     status = models.CharField(max_length=20, choices=UNIT_STATUS_CHOICES, default='available')
-    layout_type = models.CharField(max_length=50)
-    marketing_kit = models.TextField()  # Could include links or references to media resources
+    layout_type = models.ImageField(upload_to='unit_plan_images/',null=True)
+    marketing_kit = models.TextField(null=True)
 
     def __str__(self):
         return f"{self.property.property_name} - Unit {self.unit_no}"

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import BaseOwnerSerializer, OwnerSerializer, AgreementDocumentSerializer
 from rest_framework.views import APIView
-from user_management.models import Role
+from user_management.models import Role, CustomUser
 from django.contrib.auth import get_user_model
 from .models import BaseOwner, AgreementDocument, AssetManagementOwner, BrokerageOwner
 from .document import create_agreement_document 
@@ -18,7 +18,7 @@ class BaseOwnerCreateView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         try:
             print("Role of request user:", request.user.role.name)
-            if request.user.role.name not in ['Admin', 'Superuser', 'Manager']:
+            if request.user.role.name not in ['Admin', 'Superuser', 'Manager', 'Owner']:
                 print('User does not have permission')
                 return Response({"detail": "You do not have permission to create a user."}, status=status.HTTP_403_FORBIDDEN)
             serializer = self.get_serializer(data=request.data)
@@ -101,7 +101,8 @@ class UserAgreementDocumentsView(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
-        owner_id = BaseOwner.objects.get(user_id = user_id)
+        owner_id = BaseOwner.objects.get(user = user_id)
+        print('owner_id',owner_id)
         return AgreementDocument.objects.filter(owner_id=owner_id.id,is_verified_from_legal_team=True)
     
 class SignAgreementDocumentView(APIView):
@@ -121,3 +122,23 @@ class SignAgreementDocumentView(APIView):
             return Response({"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CheckOwnerView(APIView):
+    def get(self, request):
+        user_id = request.query_params.get('userid')
+        email = CustomUser.objects.get(id = user_id).email
+
+        if user_id:
+            try:
+                owner = BaseOwner.objects.get(user=user_id)
+                is_verified = owner.is_verified_from_legal_team
+                return Response({
+                    'isOwner': True,
+                    'isVerified': is_verified,
+                    'email':email
+                }, status=status.HTTP_200_OK)
+
+            except BaseOwner.DoesNotExist:
+                return Response({'isOwner': False, 'isVerified': False, 'email':email}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'No user ID provided'}, status=status.HTTP_400_BAD_REQUEST)

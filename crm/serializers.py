@@ -47,10 +47,11 @@ class BaseOwnerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"role": "Role not found."})
         print(role)
 
-        user = User.objects.create(username=email, email=email, role=role, phone_number = phone_number)
-        print(user)
-        user.set_password(password)
-        user.save()
+        user, created = User.objects.get_or_create(email=email,defaults={'username':email, 'email':email, 'role':role, 'phone_number':phone_number})
+        if created:
+            print(user)
+            user.set_password(password)
+            user.save()
 
         owner = BaseOwner.objects.create(user=user, **validated_data, agreement_type=agreement_type)
         if agreement_type == 'Brokerage':
